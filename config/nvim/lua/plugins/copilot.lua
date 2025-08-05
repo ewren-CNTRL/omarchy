@@ -51,7 +51,7 @@ return {
 	},
 	{
 		"zbirenbaum/copilot-cmp",
-		dependencies = { "copilot.lua" },
+		dependencies = { "zbirenbaum/copilot.lua" },
 		opts = {},
 		config = function(_, opts)
 			local copilot_cmp = require("copilot_cmp")

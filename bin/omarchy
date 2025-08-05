@@ -6,57 +6,38 @@ PATH="$PATH:$HOME/.local/share/omarchy/bin"
 show_ascii_art() {
   clear
   tte -i ~/.local/share/omarchy/logo.txt --frame-rate 640 --no-color expand
-  echo "                                                                                 $OMARCHY_VERSION"
+  echo "                                                                          $OMARCHY_VERSION"
 }
 
 main_menu() {
   show_ascii_art
 
-  local options=("Theme" "Setup" "Update" "Manual" "Exit")
+  local options=("Theme" "Font" "Setup" "Update" "Manual" "Exit")
   choice=$(printf "%s\n" "${options[@]}" | gum choose --header "") || exit 0
   case "$choice" in
   Theme) theme_menu ;;
-  Update) update_menu ;;
+  Font)
+    omarchy-font-menu
+    ack_command
+    main_menu
+    ;;
+  Update)
+    omarchy-update
+    main_menu
+    ;;
   Setup) setup_menu ;;
   Manual) open_manual ;;
   Exit) clear && exit 0 ;;
   esac
 }
 
-update_menu() {
-  show_ascii_art
-  local menu=("Omarchy" "Waybar" "Walker" "Plymouth" "SwayOSD" "Desktop apps" "Back")
-  local commands=(
-    "omarchy-update"
-    "omarchy-refresh-waybar"
-    "omarchy-refresh-walker"
-    "omarchy-refresh-plymouth"
-    "omarchy-refresh-swayosd"
-    "omarchy-refresh-applications"
-    "main_menu"
-  )
-  local choice
-  choice=$(printf "%s\n" "${menu[@]}" | gum choose --header="Update") || main_menu
-  for i in "${!menu[@]}"; do
-    if [[ "${menu[$i]}" == "$choice" ]]; then
-      if [[ "$choice" == "Back" ]]; then
-        main_menu
-      else
-        eval "${commands[$i]}"
-        ack_command
-        main_menu
-      fi
-      break
-    fi
-  done
-}
-
 theme_menu() {
   show_ascii_art
-  local menu=("Pick" "Install" "Remove" "Back")
+  local menu=("Pick" "Install" "Update" "Remove" "Back")
   local commands=(
     "omarchy-theme-menu"
     "install_theme_prompt"
+    "omarchy-theme-update"
     "remove_theme_prompt"
     "main_menu"
   )
